@@ -1,0 +1,3 @@
+(sym_lib_table
+  (lib (name ShiftControllerV2-rescue)(type Legacy)(uri ${KIPRJMOD}/ShiftControllerV2-rescue.lib)(options "")(descr ""))
+)
