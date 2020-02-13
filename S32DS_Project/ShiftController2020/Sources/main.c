@@ -41,16 +41,16 @@
 //Bridge 1
 #define INH1PORT PTC
 #define INH1PIN 14
-#define EN1PORT PTC
-#define EN1PIN 2
+#define IN1PORT PTC
+#define IN1PIN 2
 #define CUR1PORT PTC
 #define CUR1PIN 1
 
 //Bridge 2
 #define INH2PORT PTC
 #define INH2PIN 15
-#define EN2PORT PTC
-#define EN2PIN 3
+#define IN2PORT PTC
+#define IN2PIN 3
 #define CUR2PORT PTC
 #define CUR2PIN 16
 
@@ -64,6 +64,7 @@ volatile int send_WD = 0;
 volatile uint8_t upPaddleState = 0;
 volatile uint8_t downPaddleState = 0;
 volatile uint8_t neutralRequestState = 0;
+volatile uint8_t stopShiftState = 0;
 volatile uint16_t clutchPosition = 0;
 volatile uint8_t shifting = 0;
 
@@ -143,7 +144,16 @@ void execute_UpShift(void);
 void execute_UpShift(void) {
 
 	PINS_DRV_TogglePins(LED2PORT, 1 << LED2PIN);
-	//PINS_DRV_WritePin(LED2PORT, LED2PIN, 1);
+
+	//Setup directions
+	PINS_DRV_WritePin(IN1PORT, IN1PIN, 0);
+	PINS_DRV_WritePin(IN2PORT, IN2PIN, 1);
+
+	//Enable bridges
+	PINS_DRV_WritePin(INH1PORT, INH1PIN, 1);
+	PINS_DRV_WritePin(INH2PORT, INH2PIN, 1);
+
+
 	shifting = 1;
 
 	start_Shifting_Timer(upShiftDuration);
@@ -152,6 +162,13 @@ void execute_UpShift(void) {
 
 void execute_DownShift(void);
 void execute_DownShift(void) {
+	//Setup directions
+	PINS_DRV_WritePin(IN1PORT, IN1PIN, 1);
+	PINS_DRV_WritePin(IN2PORT, IN2PIN, 0);
+
+	//Enable bridges
+	PINS_DRV_WritePin(INH1PORT, INH1PIN, 1);
+	PINS_DRV_WritePin(INH2PORT, INH2PIN, 1);
 
 	shifting = 1;
 	start_Shifting_Timer(downShiftDuration);
@@ -161,6 +178,15 @@ void execute_DownShift(void) {
 void execute_NeutralShift(void);
 void execute_NeutralShift(void) {
 
+	//Setup directions
+	PINS_DRV_WritePin(IN1PORT, IN1PIN, 0);
+	PINS_DRV_WritePin(IN2PORT, IN2PIN, 1);
+
+	//Enable bridges
+	PINS_DRV_WritePin(INH1PORT, INH1PIN, 1);
+	PINS_DRV_WritePin(INH2PORT, INH2PIN, 1);
+
+
 	shifting = 1;
 	start_Shifting_Timer(neutralShiftDuration);
 
@@ -168,15 +194,29 @@ void execute_NeutralShift(void) {
 
 void stop_Shifting(void);
 void stop_Shifting(void) {
+	//Reset all states
 	shifting = 0;
-	//PINS_DRV_WritePin(LED2PORT, LED2PIN, 0);
+	upPaddleState = 0;
+	downPaddleState = 0;
+	neutralRequestState = 0;
+
+
+	//Stop bridge 1
+	PINS_DRV_WritePin(INH1PORT, INH1PIN, 0);
+	PINS_DRV_WritePin(IN1PORT, IN1PIN, 0);
+
+	//Stop bridge 2
+	PINS_DRV_WritePin(INH2PORT, INH2PIN, 0);
+	PINS_DRV_WritePin(IN2PORT, IN2PIN, 0);
+
+
 }
 
 void LPIT_ISR(void);
 void LPIT_ISR(void) {
 	uint32_t flag = LPIT_DRV_GetInterruptFlagTimerChannels(INST_LPIT1,3);
 	if ((flag & 2) == 2 && shifting == 1) {
-		stop_Shifting();
+		stopShiftState = 1;
 		LPIT_DRV_ClearInterruptFlagTimerChannels(INST_LPIT1,2);
 
 	}
@@ -287,10 +327,15 @@ int main(void)
 
     	if (send_WD == 1) {
 
+
+    		data.data[1] = 0;
+    		data.data[3] = 0;
+
     		//Paddle states
     		FLEXCAN_DRV_ReceiveBlocking(INST_CANCOM1,0U, &data, 10);
     		upPaddleState = data.data[1];
-    		upPaddleState = 1;
+    		PINS_DRV_WritePin(LED1PORT,LED1PIN, upPaddleState);
+
     		downPaddleState = data.data[3];
 
     		//Neutral request and clutch position
@@ -300,7 +345,12 @@ int main(void)
 
     		FeedWatchDog();
     		send_WD = 0;
-    		PINS_DRV_TogglePins(LED1PORT, 1 << LED1PIN);
+    		//PINS_DRV_TogglePins(LED1PORT, 1 << LED1PIN);
+    	}
+
+    	if (stopShiftState == 1) {
+    		stop_Shifting();
+    		stopShiftState = 0;
     	}
 
     	//Check local variables for current shifting states
