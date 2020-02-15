@@ -129,21 +129,20 @@ void FeedWatchDog(void) {
 
 	SBC_Setup[0] = 0x00;
 	SBC_Setup[1] = 0x4;
-	status_t result;
-	result = LPSPI_DRV_MasterTransferBlocking(LPSPICOM1, SBC_Setup, rec_buffer, 2, 1000);
+
+	LPSPI_DRV_MasterTransferBlocking(LPSPICOM1, SBC_Setup, rec_buffer, 2, 1000);
 
 }
 
 void start_Shifting_Timer(uint32_t duration_in_ms);
 void start_Shifting_Timer(uint32_t duration_in_ms) {
 	LPIT_DRV_SetTimerPeriodByUs(INST_LPIT1, 1U, duration_in_ms * 1000);
+
 	LPIT_DRV_StartTimerChannels(INST_LPIT1,2);
 }
 
 void execute_UpShift(void);
 void execute_UpShift(void) {
-
-	PINS_DRV_TogglePins(LED2PORT, 1 << LED2PIN);
 
 	//Setup directions
 	PINS_DRV_WritePin(IN1PORT, IN1PIN, 0);
@@ -194,12 +193,8 @@ void execute_NeutralShift(void) {
 
 void stop_Shifting(void);
 void stop_Shifting(void) {
-	//Reset all states
-	shifting = 0;
-	upPaddleState = 0;
-	downPaddleState = 0;
-	neutralRequestState = 0;
 
+	LPIT_DRV_StopTimerChannels(INST_LPIT1,2U);
 
 	//Stop bridge 1
 	PINS_DRV_WritePin(INH1PORT, INH1PIN, 0);
@@ -209,17 +204,24 @@ void stop_Shifting(void) {
 	PINS_DRV_WritePin(INH2PORT, INH2PIN, 0);
 	PINS_DRV_WritePin(IN2PORT, IN2PIN, 0);
 
+	//Reset all states
+	shifting = 0;
+	upPaddleState = 0;
+	downPaddleState = 0;
+	neutralRequestState = 0;
+	stopShiftState = 0;
+
 
 }
 
 void LPIT_ISR(void);
 void LPIT_ISR(void) {
 	uint32_t flag = LPIT_DRV_GetInterruptFlagTimerChannels(INST_LPIT1,3);
-	if ((flag & 2) == 2 && shifting == 1) {
+	if ((flag & 2) == 2) {
 		stopShiftState = 1;
 		LPIT_DRV_ClearInterruptFlagTimerChannels(INST_LPIT1,2);
-
 	}
+
 	if ((flag & 1) == 1){
 		send_WD = 1;
 		LPIT_DRV_ClearInterruptFlagTimerChannels(INST_LPIT1,1);
@@ -327,34 +329,49 @@ int main(void)
 
     	if (send_WD == 1) {
 
-
-    		data.data[1] = 0;
-    		data.data[3] = 0;
+    		status_t result;
+    		//flexcan_msgbuff_t data;
 
     		//Paddle states
-    		FLEXCAN_DRV_ReceiveBlocking(INST_CANCOM1,0U, &data, 10);
-    		upPaddleState = data.data[1];
-    		PINS_DRV_WritePin(LED1PORT,LED1PIN, upPaddleState);
+    		FLEXCAN_DRV_ConfigRxMb(INST_CANCOM1,0U, &dataInfo, 0x3E7);
+    		result = FLEXCAN_DRV_ReceiveBlocking(INST_CANCOM1, 0U, &data, 10);
 
-    		downPaddleState = data.data[3];
+    		if (result == STATUS_SUCCESS) {
+    			upPaddleState = data.data[1];
+    			downPaddleState = data.data[3];
+    		} else {
+    			upPaddleState = 0;
+    			downPaddleState = 0;
+    		}
+
+
 
     		//Neutral request and clutch position
-    		FLEXCAN_DRV_ReceiveBlocking(INST_CANCOM1,1U, &data, 10);
-    		neutralRequestState = data.data[5];
-    		clutchPosition = data.data[7] + (data.data[6]<<8);
+    		FLEXCAN_DRV_ConfigRxMb(INST_CANCOM1,1U, &dataInfo, 0x2C0);
+    		result = FLEXCAN_DRV_ReceiveBlocking(INST_CANCOM1,1U, &data, 10);
+
+    		if (result == STATUS_SUCCESS) {
+    			neutralRequestState = data.data[5];
+				clutchPosition = data.data[7] + (data.data[6]<<8);
+			} else {
+				neutralRequestState = 0;
+				clutchPosition = 0;
+			}
+
 
     		FeedWatchDog();
     		send_WD = 0;
-    		//PINS_DRV_TogglePins(LED1PORT, 1 << LED1PIN);
+    		PINS_DRV_TogglePins(LED1PORT, 1 << LED1PIN);
     	}
 
     	if (stopShiftState == 1) {
     		stop_Shifting();
-    		stopShiftState = 0;
+
     	}
 
     	//Check local variables for current shifting states
     	if (shifting != 1) {
+    		PINS_DRV_WritePin(LED2PORT,LED2PIN, upPaddleState | downPaddleState);
     		if (upPaddleState == 1) {
     			execute_UpShift();
     		} else if (downPaddleState == 1) {

@@ -21,7 +21,7 @@
   </ToolchainSettings>
   <GeneratedFilesList>
     <GeneratedByPE>
-      <File Name="Generated_Code/lpit1.c" FileDate="2020-02-03, 13:33:56" FileAge="1580765636364" FileType="45637" CompNumb="27" />
+      <File Name="Generated_Code/lpit1.c" FileDate="2020-02-14, 16:05:56" FileAge="1581725156310" FileType="45637" CompNumb="27" />
       <File Name="SDK/platform/devices/devassert.h" FileDate="2019-12-13, 21:20:07" FileAge="1576300807761" FileType="1048576" CompNumb="1" />
       <File Name="SDK/middleware/sbc/sbc_uja1169/source/sbc_uja1169_driver.c" FileDate="1969-12-31, 15:59:59" FileAge="-1" FileType="1048576" />
       <File Name="SDK/platform/drivers/src/clock/S32K1xx/smc_hw_access.h" FileDate="2019-12-13, 21:20:07" FileAge="1576300807871" FileType="1048576" CompNumb="3" />
@@ -80,7 +80,7 @@
       <File Name="SDK/platform/drivers/src/flexcan/flexcan_driver.c" FileDate="2019-12-13, 21:49:06" FileAge="1576302546634" FileType="1048576" CompNumb="5" />
       <File Name="SDK/platform/drivers/inc/flexcan_driver.h" FileDate="2019-12-13, 21:49:06" FileAge="1576302546728" FileType="1048576" CompNumb="5" />
       <File Name="Generated_Code/lpspiCom1.h" FileDate="2020-02-03, 09:08:53" FileAge="1580749733351" FileType="45637" CompNumb="22" />
-      <File Name="Sources/main.c" FileDate="2020-02-03, 13:45:25" FileAge="1580766325171" FileType="128" />
+      <File Name="Sources/main.c" FileDate="2020-02-14, 16:05:27" FileAge="1581725127450" FileType="128" />
       <File Name="Generated_Code/lpspiCom1.c" FileDate="2020-02-03, 09:08:53" FileAge="1580749733320" FileType="45637" CompNumb="22" />
       <File Name="SDK/platform/devices/startup.h" FileDate="2019-12-13, 21:20:07" FileAge="1576300807792" FileType="1048576" CompNumb="1" />
       <File Name="SDK/platform/devices/startup.c" FileDate="2019-12-13, 21:20:07" FileAge="1576300807777" FileType="1048576" CompNumb="1" />
@@ -104,5 +104,5 @@
       <File Name="SDK/platform/drivers/src/lpspi/lpspi_hw_access.c" FileDate="2019-12-17, 17:52:31" FileAge="1576633951068" FileType="1048576" CompNumb="22" />
     </GeneratedByPE>
   </GeneratedFilesList>
-  <CodeGenReference>50</CodeGenReference>
+  <CodeGenReference>53</CodeGenReference>
 </CodeGenerationInfo>

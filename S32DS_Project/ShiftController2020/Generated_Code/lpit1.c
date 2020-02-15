@@ -7,7 +7,7 @@
 **     Version     : Component SDK_S32K116_00, Driver 01.00, CPU db: 3.00.000
 **     Repository  : SDK_S32K116_00
 **     Compiler    : GNU C Compiler
-**     Date/Time   : 2020-02-03, 13:33, # CodeGen: 48
+**     Date/Time   : 2020-02-14, 16:05, # CodeGen: 52
 **
 **     Copyright 1997 - 2015 Freescale Semiconductor, Inc.
 **     Copyright 2016-2017 NXP
