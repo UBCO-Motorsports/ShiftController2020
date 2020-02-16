@@ -334,7 +334,7 @@ int main(void)
 
     		//Paddle states
     		FLEXCAN_DRV_ConfigRxMb(INST_CANCOM1,0U, &dataInfo, 0x3E7);
-    		result = FLEXCAN_DRV_ReceiveBlocking(INST_CANCOM1, 0U, &data, 10);
+    		result = FLEXCAN_DRV_ReceiveBlocking(INST_CANCOM1, 0U, &data, 15);
 
     		if (result == STATUS_SUCCESS) {
     			upPaddleState = data.data[1];
@@ -348,7 +348,7 @@ int main(void)
 
     		//Neutral request and clutch position
     		FLEXCAN_DRV_ConfigRxMb(INST_CANCOM1,1U, &dataInfo, 0x2C0);
-    		result = FLEXCAN_DRV_ReceiveBlocking(INST_CANCOM1,1U, &data, 10);
+    		result = FLEXCAN_DRV_ReceiveBlocking(INST_CANCOM1,1U, &data, 15);
 
     		if (result == STATUS_SUCCESS) {
     			neutralRequestState = data.data[5];
