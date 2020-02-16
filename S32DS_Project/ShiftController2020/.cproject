@@ -246,7 +246,6 @@
 							<tool id="com.freescale.s32ds.cross.gnu.disassembler.44501044" name="Standard S32DS Disassembler" superClass="com.freescale.s32ds.cross.gnu.disassembler"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.freescale.s32ds.cross.gnu.arm.cortexm.exe.debug.1180754077.Project_Settings/Debugger/ControlBoard_CORE_Debug_RAM_Segger.launch" name="ControlBoard_CORE_Debug_RAM_Segger.launch" rcbsApplicability="disable" resourcePath="Project_Settings/Debugger/ControlBoard_CORE_Debug_RAM_Segger.launch" toolsToInvoke=""/>
 					<fileInfo id="com.freescale.s32ds.cross.gnu.arm.cortexm.exe.debug.1180754077.Project_Settings/Linker_Files" name="Linker_Files" rcbsApplicability="disable" resourcePath="Project_Settings/Linker_Files" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Generated_Code"/>
@@ -504,7 +503,6 @@
 							<tool id="com.freescale.s32ds.cross.gnu.disassembler.1790243690" name="Standard S32DS Disassembler" superClass="com.freescale.s32ds.cross.gnu.disassembler"/>
 						</toolChain>
 					</folderInfo>
-					<fileInfo id="com.freescale.s32ds.cross.gnu.arm.cortexm.exe.release.1699161217.Project_Settings/Debugger/ControlBoard_CORE_Debug_RAM_Segger.launch" name="ControlBoard_CORE_Debug_RAM_Segger.launch" rcbsApplicability="disable" resourcePath="Project_Settings/Debugger/ControlBoard_CORE_Debug_RAM_Segger.launch" toolsToInvoke=""/>
 					<fileInfo id="com.freescale.s32ds.cross.gnu.arm.cortexm.exe.release.1699161217.Project_Settings/Linker_Files" name="Linker_Files" rcbsApplicability="disable" resourcePath="Project_Settings/Linker_Files" toolsToInvoke=""/>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Generated_Code"/>
